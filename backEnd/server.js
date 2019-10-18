@@ -4,6 +4,7 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const db = require('./db/connect')
 const userRouter = require('./router/userRouter')
+const foodRouter = require('./router/foodRouter')
 
 // 获取使用post请求传递的数据
 app.use(bodyParser.json())
@@ -12,7 +13,8 @@ app.use(express.static(path.join(__dirname, 'public')))    // 设置静态资源
 
 // 路由
 app.use('/user', userRouter)
+app.use('/food', foodRouter)
 
 app.listen(3000, () => {
-  console.log('Server Start!')
+  console.log('Server Start! Port 3000')
 })
