@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const user = require('../db/model/userModel')
 const nodemailer = require('nodemailer')
+const {getNextSequence} = require('../utils/tableSet')
 
 // 注册
 router.post('/register', (req, res) => {
@@ -11,10 +12,13 @@ router.post('/register', (req, res) => {
     res.send({code: -1, msg: '参数错误', success: false})
     return false
   }
+  // 查找数据库中是否有这个用户
   findUser({username: name}).then(data => {
-    if (data == null) {
-      user.insertMany({username: name, email, password: pwd})
-      res.send({code: 1, msg: '注册成功', success: true})
+    if (!data) { // 不存在
+      getNextSequence('user').then(data => {
+        user.insertMany({id: data.value, username: name, email, password: pwd})
+        res.send({code: 1, msg: '注册成功', success: true})
+      })
     } else {
       res.send({code: -1, msg: '用户已存在', success: false})
     }

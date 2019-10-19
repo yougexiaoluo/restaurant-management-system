@@ -1,7 +1,14 @@
 const mongoose = require('mongoose')
 
+/**
+ * 1. 需要添加用户token
+ * 2. 头像路径
+ * 3. 
+ */
+
 // 创建一个与集合相关联的Schema对象
 const userModel = new mongoose.Schema({
+  id: {type: Number, required: true},
   username: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true }
