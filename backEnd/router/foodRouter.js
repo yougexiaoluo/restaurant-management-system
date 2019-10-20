@@ -5,7 +5,13 @@ const {getNextSequence} = require('../utils/tableSet')
 
 // 菜品列表数据
 router.get('/list', (req, res) => {
-
+  findData()
+    .then(data => {
+      res.send({code: 1, data, msg: '请求成功', success: true})
+    })
+    .catch(err => {
+      res.send({code: -1, msg: '请求失败', success: false, Error: err})
+    })
 })
 
 // 添加菜品
@@ -37,9 +43,27 @@ router.post('/add', (req, res) => {
   })
 })
 
+/**
+ * 批量删除
+ *  Model.remove({ _id: { $in: ['aID', 'bID'] } })
+ */
+
 // 删除菜品
 router.delete('/delete', (req, res) => {
-
+  let {id} = req.query
+  food.findOneAndRemove({id})
+    .then(() => {
+      findData()
+        .then(data => {
+          res.send({code: 1, data, msg: '请求成功', success: true})
+        })
+        .catch(err => {
+          res.send({code: -1, msg: '获取失败', success: false, Error: err})
+        })
+    })
+    .catch(err => {
+      res.send({code: -1, msg: '删除失败', success: false, Error: err})
+    })
 })
 
 // 编辑菜品
@@ -49,7 +73,30 @@ router.post('/edit', (req, res) => {
 
 // 关键字搜索(模糊查询)
 router.post('/search', (req, res) => {
+  let {keyword} = req.body
+  let reg = new RegExp(keyword)
 
+  food.find({$or: [{name: {$regex: reg}}, {desc: {$regex: reg}}]})
+    .then(data => {
+      res.send({code: 1, data, msg: '请求成功', success: true})
+    })
+    .catch(err => {
+      res.send({code: -1, msg: '请求失败', success: false, Error: err})
+    })
 })
+
+
+// 查找数据
+findData = () => {
+  return new Promise((resolve, reject) => {
+    food.find()
+    .then(data => {
+      resolve(data)
+    })
+    .catch(err => {
+      reject(err)
+    })
+  })
+}
 
 module.exports = router

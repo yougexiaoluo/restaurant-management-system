@@ -40,6 +40,10 @@ router.post('/email/code', (req, res) => {
     })
 })
 
+/**
+ * 1. 没有做密码校验
+ */
+
 // 登录
 router.post('/login', (req, res) => {
   let {name, pwd} = req.body
