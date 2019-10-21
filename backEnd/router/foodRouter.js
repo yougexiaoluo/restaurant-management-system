@@ -85,6 +85,22 @@ router.post('/search', (req, res) => {
     })
 })
 
+// 分页
+router.get('/getInfoByPage', (req, res) => {
+  let pageSize = req.query.pageSize || 1
+  let page = req.query.page || 1
+
+  food.find()
+    .limit(Number(pageSize))
+    .skip((Number(page - 1) * pageSize))
+    .then(data => {
+      res.send({code: 1, data, msg: '请求成功', success: true})
+    })
+    .catch(err => {
+      res.send({code: -1, msg: '请求失败', success: false, Error: err})
+    })
+})
+
 
 // 查找数据
 findData = () => {
